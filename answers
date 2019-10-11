@@ -368,12 +368,12 @@ where
 group by
     ar.Name;
 
-    
+
 --     27
     with popularType as (
         select
             m.Name,
-            i.Total as total
+            sum(i.Total) as total
         from
             MediaType m,
             Invoice i,
