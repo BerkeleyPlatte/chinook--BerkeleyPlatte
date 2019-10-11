@@ -339,9 +339,12 @@ from
 --     25
 select
     t.Name,
-    count(t.Name) as total
+    sum(il.Quantity) as total
 from
-    Track t
+    Track t,
+    InvoiceLine il
+where
+    t.TrackId = il.TrackId
 group by
     t.Name
 order by
