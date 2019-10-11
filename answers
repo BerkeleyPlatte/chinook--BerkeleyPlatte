@@ -1,0 +1,393 @@
+--    1
+select
+    c.FirstName,
+    c.LastName,
+    c.CustomerId,
+    c.Country
+from
+    Customer c
+where
+    c.Country != 'USA';
+
+
+--     2
+select
+    c.FirstName,
+    c.LastName,
+    c.CustomerId,
+    c.Country
+from
+    Customer c
+where
+    c.Country = 'Brazil';
+
+
+--     3
+select
+    c.FirstName,
+    c.LastName,
+    i.InvoiceId,
+    i.InvoiceDate,
+    i.BillingCountry
+from
+    Customer c
+    join Invoice i
+where
+    i.CustomerId = c.CustomerId
+    and c.Country = 'Brazil';
+
+
+-- 	   4
+select
+    e.EmployeeId
+from
+    Employee e
+where
+    e.Title = 'Sales Support Agent';
+
+
+--     5
+select
+    DISTINCT i.BillingCountry
+from
+    Invoice i;
+
+
+--     6
+select
+    e.FirstName,
+    e.LastName,
+    i.InvoiceId
+from
+    Employee e,
+    Invoice i,
+    Customer c
+where
+    i.CustomerId = c.CustomerId
+    and c.SupportRepId = e.EmployeeId;
+
+
+--     7
+select
+    i.Total,
+    c.FirstName,
+    c.LastName,
+    c.Country,
+    e.FirstName,
+    e.LastName
+from
+    Invoice i,
+    Customer c,
+    Employee e
+where
+    i.CustomerId = c.CustomerId
+    and c.SupportRepId = e.EmployeeId;
+
+
+--     8
+select
+    COUNT(*)
+from
+    Invoice i
+where
+    i.InvoiceDate BETWEEN date('2009-01-01')
+    and date('2009-12-31');
+select
+    COUNT(*)
+from
+    Invoice i
+where
+    i.InvoiceDate BETWEEN date('2011-01-01')
+    and date('2011-12-31');
+
+
+--     9
+select
+    sum(i.Total)
+from
+    Invoice i
+where
+    i.InvoiceDate BETWEEN date('2009-01-01')
+    and date('2009-12-31');
+select
+    sum(i.Total)
+from
+    Invoice i
+where
+    i.InvoiceDate BETWEEN date('2011-01-01')
+    and date('2011-12-31');
+
+
+--     10
+select
+    count(*)
+from
+    InvoiceLine il
+where
+    il.InvoiceId = 37;
+
+
+--     11
+select
+    count(*),
+    il.InvoiceId
+from
+    InvoiceLine il
+group by
+    il.InvoiceId;
+
+
+--     12
+select
+    il.InvoiceLineId,
+    t.Name
+from
+    InvoiceLine il,
+    Track t
+where
+    il.TrackId = t.TrackId;
+
+
+--     13
+select
+    il.InvoiceLineId,
+    t.Name,
+    ar.Name
+from
+    InvoiceLine il,
+    Track t,
+    Artist ar,
+    Album al
+where
+    il.TrackId = t.TrackId
+    and t.AlbumId = al.AlbumId
+    and al.ArtistId = ar.ArtistId;
+
+
+--     14
+select
+    count(*),
+    i.BillingCountry
+from
+    Invoice i
+group by
+    i.BillingCountry;
+
+
+--     15
+select
+    count(pt.PlaylistId),
+    p.Name
+from
+    Playlist p,
+    PlaylistTrack pt
+where
+    pt.PlaylistId = p.PlaylistId
+group by
+    p.Name;
+
+
+--     16
+select
+    t.Name,
+    g.Name,
+    m.Name,
+    al.Title
+from
+    Track t,
+    Genre g,
+    MediaType m,
+    Album al
+where
+    t.AlbumId = al.AlbumId
+    and t.GenreId = g.GenreId
+    and t.MediaTypeId = m.MediaTypeId
+    and t.AlbumId = al.AlbumId;
+
+
+--     17
+select
+    count(il.InvoiceLineId),
+    i.*
+from
+    InvoiceLine il,
+    Invoice i
+where
+    il.InvoiceId = i.InvoiceId
+group by
+    i.InvoiceId;
+
+
+--     18
+select
+    e.EmployeeId,
+    sum(i.Total)
+from
+    Employee e,
+    Invoice i,
+    Customer c
+where
+    e.EmployeeId = c.SupportRepId
+    and c.CustomerId = i.CustomerId
+group by
+    e.EmployeeId;
+
+
+--     19
+with employees as (
+        select
+            e.EmployeeId,
+            sum(i.Total) as "total"
+        from
+            Employee e,
+            Invoice i,
+            Customer c
+        where
+            e.EmployeeId = c.SupportRepId
+            and c.CustomerId = i.CustomerId
+            and i.InvoiceDate BETWEEN date('2009-01-01')
+            and date('2009-12-31')
+        group by
+            e.EmployeeId
+    )
+select
+    EmployeeId,
+    max(total)
+from
+    employees;
+
+
+--     20
+with employees as (
+        select
+            e.EmployeeId,
+            sum(i.Total) as "total"
+        from
+            Employee e,
+            Invoice i,
+            Customer c
+        where
+            e.EmployeeId = c.SupportRepId
+            and c.CustomerId = i.CustomerId
+        group by
+            e.EmployeeId
+    )
+select
+    EmployeeId,
+    max(total)
+from
+    employees;
+
+
+--     21
+select
+    count(c.CustomerId),
+    e.EmployeeId
+from
+    Customer c,
+    Employee e
+where
+    c.SupportRepId = e.EmployeeId
+group by
+    e.EmployeeId;
+
+
+--     22
+select
+    sum(i.Total),
+    i.BillingCountry
+from
+    Invoice i
+group by
+    i.BillingCountry;
+
+
+--     23
+    with greed as (
+        select
+            sum(i.Total) as total,
+            i.BillingCountry
+        from
+            Invoice i
+        group by
+            i.BillingCountry
+    )
+select
+    max(total),
+    BillingCountry
+from
+    greed;
+
+
+--     24
+    with popular as (
+        select
+            t.Name,
+            count(t.Name) as total
+        from
+            Track t
+        group by
+            t.Name
+    )
+select
+    max(total),
+    Name
+from
+    popular;
+
+
+--     25
+select
+    t.Name,
+    count(t.Name) as total
+from
+    Track t
+group by
+    t.Name
+order by
+    total DESC
+limit
+    5;
+
+    
+--     26
+select
+    ar.Name,
+    sum(i.Total)
+from
+    Artist ar,
+    Invoice i,
+    Album al,
+    Track t,
+    InvoiceLine il
+where
+    ar.ArtistId = al.ArtistId
+    and al.AlbumId = t.AlbumId
+    and t.TrackId = il.TrackId
+    and il.InvoiceId = i.InvoiceId
+group by
+    ar.Name;
+
+    
+--     27
+    with popularType as (
+        select
+            m.Name,
+            i.Total as total
+        from
+            MediaType m,
+            Invoice i,
+            Track t,
+            InvoiceLine il
+        where
+            m.MediaTypeId = t.MediaTypeId
+            and t.TrackId = il.TrackId
+            and il.InvoiceId = i.InvoiceId
+        group by
+            m.Name
+    )
+select
+    max(total),
+    Name
+from
+    popularType;
