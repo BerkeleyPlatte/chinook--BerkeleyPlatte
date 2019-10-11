@@ -369,7 +369,11 @@ where
     and t.TrackId = il.TrackId
     and il.InvoiceId = i.InvoiceId
 group by
-    ar.Name;
+    ar.Name
+order by
+    total DESC
+limit
+    3;
 
 
 --     27
